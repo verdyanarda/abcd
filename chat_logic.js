@@ -7,24 +7,11 @@ const model = "gemini-2.5-flash-preview-09-2025";
 let chatHistory = [];
 const systemInstruction = "Act as Arex AI, a professional and helpful assistant. Your responses should be clear, concise, and structured. Always use standard text formatting (like lists, paragraphs, and explicit HTML tags for code blocks) to make your answers easy to read. Respond in Indonesian. When generating code, always wrap it in triple backticks (```) followed by the language name.";
 
-// Elemen DOM
-const chatArea = document.getElementById('chat-area');
-const userInput = document.getElementById('user-input');
-const sendBtn = document.getElementById('send-btn');
-const loadingIndicator = document.getElementById('loading-indicator');
-const newChatBtn = document.getElementById('new-chat-btn');
-const refineBtn = document.getElementById('refine-btn');
-const summarizeBtn = document.getElementById('summarize-btn');
-
-// Navigasi & Views
-const navChat = document.getElementById('nav-chat');
-const navHome = document.getElementById('nav-home');
-const navContact = document.getElementById('nav-contact');
-
-const chatView = document.getElementById('chat-view');
-const homeView = document.getElementById('home-view');
-const contactView = document.getElementById('contact-view');
-
+// Deklarasi variabel untuk elemen DOM (akan diinisialisasi dalam DOMContentLoaded)
+let chatArea, userInput, sendBtn, loadingIndicator, newChatBtn;
+let refineBtn, summarizeBtn;
+let navChat, navHome, navContact;
+let chatView, homeView, contactView;
 
 // Fungsi untuk menampilkan pesan modal
 function showAlert(title, message) {
@@ -32,10 +19,6 @@ function showAlert(title, message) {
     document.getElementById('modal-message').textContent = message;
     document.getElementById('modal-container').classList.remove('hidden');
 }
-
-document.getElementById('modal-close-btn').addEventListener('click', () => {
-    document.getElementById('modal-container').classList.add('hidden');
-});
 
 // FUNGSI COPY TO CLIPBOARD
 function copyToClipboard(text, element) {
@@ -79,6 +62,9 @@ function copyToClipboard(text, element) {
 
 // FUNGSI PENTING: Mengganti Tampilan (View Switching)
 function switchView(viewId) {
+    // Pastikan elemen sudah diinisialisasi
+    if (!navChat || !chatView) return; 
+
     // 1. Reset active state for all nav links
     [navChat, navHome, navContact].forEach(nav => {
         nav.classList.remove('bg-indigo-600', 'text-white', 'hover:bg-indigo-700', 'shadow-md');
@@ -419,6 +405,9 @@ async function summarizeLastResponse() {
 
 // FUNGSI UNTUK MENGUPDATE STATUS TOMBOL UTILITAS
 function updateUtilityButtonStates() {
+    // Periksa apakah elemen sudah diinisialisasi
+    if (!userInput || !refineBtn || !summarizeBtn) return;
+    
     const inputHasText = userInput.value.trim().length > 0;
     const lastMessageIsModel = chatHistory.slice().reverse().find(m => m.role === 'model');
     
@@ -426,41 +415,43 @@ function updateUtilityButtonStates() {
     refineBtn.disabled = !inputHasText || loadingIndicator.classList.contains('hidden') === false;
     
     // Summarize Last Response: Aktif jika ada respons model sebelumnya
-    summarizeBtn.disabled = !lastModelMessage || loadingIndicator.classList.contains('hidden') === false;
+    summarizeBtn.disabled = !lastMessageIsModel || loadingIndicator.classList.contains('hidden') === false;
 }
 
 // Fungsi untuk memulai chat baru
-newChatBtn.addEventListener('click', () => {
+function startNewChat() {
     chatHistory = [];
     chatArea.innerHTML = '';
     appendMessage('model', 'Percakapan baru telah dimulai. Saya Arex AI, asisten profesional Anda. Apa yang bisa saya bantu hari ini?');
     switchView('chat');
     updateUtilityButtonStates();
-});
+}
 
-
-// Listeners untuk input dan tombol
-sendBtn.addEventListener('click', sendMessage);
-userInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey) {
-        e.preventDefault();
-        if (!sendBtn.disabled) {
-            sendMessage();
-        }
-    }
-});
-
-// Toggle tombol kirim dan tombol utilitas berdasarkan isi input
-userInput.addEventListener('input', () => {
-    sendBtn.disabled = userInput.value.trim() === '';
-    updateUtilityButtonStates();
-});
-
-// Event Listeners for switching views
+// *** INITIALIZATION DAN EVENT LISTENERS ***
 document.addEventListener('DOMContentLoaded', () => {
-    switchView('chat');
-    updateUtilityButtonStates();
+    // 1. Inisialisasi Elemen DOM (PENTING: DILAKUKAN DI SINI UNTUK MEMASTIKAN ELEMEN SUDAH DIMUAT)
+    chatArea = document.getElementById('chat-area');
+    userInput = document.getElementById('user-input');
+    sendBtn = document.getElementById('send-btn');
+    loadingIndicator = document.getElementById('loading-indicator');
+    newChatBtn = document.getElementById('new-chat-btn');
+    refineBtn = document.getElementById('refine-btn');
+    summarizeBtn = document.getElementById('summarize-btn');
+    
+    // Navigasi & Views
+    navChat = document.getElementById('nav-chat');
+    navHome = document.getElementById('nav-home');
+    navContact = document.getElementById('nav-contact');
+    chatView = document.getElementById('chat-view');
+    homeView = document.getElementById('home-view');
+    contactView = document.getElementById('contact-view');
 
+    // Modal Listener
+    document.getElementById('modal-close-btn').addEventListener('click', () => {
+        document.getElementById('modal-container').classList.add('hidden');
+    });
+
+    // 2. Attach Listeners untuk Navigasi (FIXED: Sekarang navHome, navChat, dll sudah pasti ada)
     navHome.addEventListener('click', (e) => {
         e.preventDefault();
         switchView('home');
@@ -473,4 +464,28 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         switchView('contact');
     });
-});
+    newChatBtn.addEventListener('click', startNewChat);
+
+
+    // 3. Listeners untuk input dan tombol kirim
+    sendBtn.addEventListener('click', sendMessage);
+
+
+      userInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey && !e.ctrlKey && !e.altKey && !e.metaKey) {
+            e.preventDefault();
+            if (!sendBtn.disabled) {
+            }
+         }
+      });
+
+    // 4. Toggle tombol kirim dan tombol utilitas berdasarkan isi input
+    userInput.addEventListener('input', () => {
+    sendBtn.disabled = userInput.value.trim() === '';
+        updateUtilityButtonStates();
+  });
+
+    // 5. Initial State
+    switchView('chat');
+    updateUtilityButtonStates();
+})
