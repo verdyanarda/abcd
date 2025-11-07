@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Sederhana</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background-color: #f4f6f8;
+        }
+
+        header {
+            background-color: #0078d7;
+            color: white;
+            padding: 15px 20px;
+            text-align: center;
+        }
+
+        nav {
+            background-color: #1e1e2f;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 20px;
+            margin: 0 5px;
+            border-radius: 5px;
+        }
+
+        nav a:hover {
+            background-color: #0078d7;
+        }
+
+        .container {
+            padding: 20px;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        footer {
+            text-align: center;
+            background: #1e1e2f;
+            color: white;
+            padding: 10px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Dashboard Sederhana</h1>
+    </header>
+
+    <nav>
+        <a href="#home">Home</a>
+        <a href="#contact">Contact Us</a>
+    </nav>
+
+    <div class="container" id="content">
+        <div class="card" id="home">
+            <h2>🏠 Home</h2>
+            <p>Selamat datang di dashboard sederhana ini. Anda dapat menavigasi ke halaman Contact Us untuk menghubungi kami.</p>
+        </div>
+
+        <div class="card" id="contact">
+            <h2>📞 Contact Us</h2>
+            <form>
+                <label>Nama:</label><br>
+                <input type="text" name="nama" placeholder="Masukkan nama" required><br><br>
+
+                <label>Email:</label><br>
+                <input type="email" name="email" placeholder="Masukkan email" required><br><br>
+
+                <label>Pesan:</label><br>
+                <textarea name="pesan" rows="4" placeholder="Tulis pesan Anda..." required></textarea><br><br>
+
+                <button type="submit">Kirim</button>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        &copy; 2025 Dashboard Sederhana - Dibuat dengan ❤️
+    </footer>
+
+</body>
+      </html>
+      
